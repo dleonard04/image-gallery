@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+[% INCLUDE header %]
+
+<body>
+ <p>
+  <ul class="no_bullet">
+[% FOREACH i IN captions.keys.sort -%]
+ [% IF captions.$i.title %]
+   <li class="no_bullet"> <a href="[% i %]"><img src=".thumb_[% i %]" alt="[% captions.$i.title %]"/></a>
+ [% ELSE %]
+   <li class="no_bullet"> <a href="[% i %]"><img src=".thumb_[% i %]" alt="[% i %]"/></a>
+ [% END %]
+
+ [% IF captions.$i.file %]
+    <ul>
+  [% FOREACH j IN captions.$i.keys -%]
+     <li>[% j %]: [% captions.$i.$j %]</li>
+  [% END %]
+    </ul>
+ [% END %]
+   </li>
+[% END %]
+ </p>
+</body>
+
+[% INCLUDE footer %]
+
+</html>

@@ -1,0 +1,16 @@
+a:active {color: #ff00ff; font-weight: bold}
+a:link {color: #5555ff}
+a:visited {color: #aa00aa}
+
+body {color: #ffffff;
+      background-color: #000000;
+      background-repeat: no-repeat;
+      background-position: top right}
+
+.bold {font-weight: bold}
+.italic {font-style: italic}
+.underline {text-decoration: underline}
+
+# List types
+ul.no_bullet {list_style-type: none}
+li.no_bullet {list-style-type: none}

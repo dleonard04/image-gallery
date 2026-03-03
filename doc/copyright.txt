@@ -1,0 +1,8 @@
+image-gallery packages copyright 2004-2007 Douglas Leonard
+Image::Gallery modules and scripts copyright 2004-2007 Douglas Leonard
+Sample templates and css copyright 2004-2007 Douglas Leonard
+
+image-gallery codebase is licensed under the GPLv2.
+
+Sample images are copyright by their respective owners.  Artwork by Douglas leonard.  Characters are copyright and trademark by their respective owners.
+

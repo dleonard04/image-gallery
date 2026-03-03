@@ -1,0 +1,21 @@
+image-gallery (003) unstable; urgency=low
+
+  # Updated release for modern debian
+
+ -- dleonard <dleonard@thegrey.net>  Fri, 18 Aug 2020 07:22:00 -0700
+
+image-gallery (002) unstable; urgency=low
+
+  * Second release of Image::Gallery package
+
+ -- dleonard <dleonard@dleonard.net>  Wed, 20 Aug 2008 15:37:12 -0800
+
+image-gallery (001) unstable; urgency=low
+
+  * Initial release of Image::Gallery package
+
+ -- dleonard <dleonard@dleonard.net>  Mon, 30 Oct 2006 20:37:12 -0800
+
+Local variables:
+mode: debian-changelog
+End:

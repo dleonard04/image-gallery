@@ -1,0 +1,12 @@
+Source: image-gallery
+Section: unknown
+Priority: optional
+Maintainer: dleonard <dleonard@thegrey.net>
+Build-Depends: debhelper (>> 3.0.0)
+Standards-Version: 3.5.2
+
+Package: image-gallery 
+Architecture: any
+Depends: perl (>= 5.8.8), perlmagick, libtemplate-perl
+Description: Image::Gallery
+ Debian package of Image::Gallery perl modules and tools for generating html image galleries.

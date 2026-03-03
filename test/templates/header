@@ -1,0 +1,13 @@
+ <head>
+[% IF title %]
+  <title>[% title %]</title>
+[% END %]
+
+[% IF favicon %]
+  <link rel="shortcut icon" href="[% favicon %]" type="image/x-icon" />
+[% END %]
+
+[% FOREACH ss = stylesheet %]
+  <link rel=stylesheet type="text/css" href="[% ss %]" />
+[% END %]
+ </head>

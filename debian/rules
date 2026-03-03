@@ -1,0 +1,91 @@
+#!/usr/bin/make -f
+
+#=============================================================#
+# <GLOBAL>
+
+export DH_VERBOSE=1
+export DH_COMPAT=8
+
+PKG=$(shell grep Package: debian/control | awk '{print $$2}')
+PREFIX=$(shell pwd)/debian/$(PKG)
+
+#=============================================================#
+# <configure>
+
+configure: configure-stamp
+
+configure-stamp:
+	dh_testdir
+	# Add here commands to configure the package:
+	touch configure-stamp
+
+#=============================================================#
+# <build>
+
+build: configure-stamp build-stamp
+
+build-stamp:
+	dh_testdir
+	$(MAKE) build
+	touch build-stamp
+
+#=============================================================#
+# <clean>
+
+clean:
+	dh_testdir
+	dh_testroot
+	dh_clean
+	rm -f build-stamp configure-stamp
+
+#=============================================================#
+# <install>
+
+install:
+	dh_testdir
+	dh_testroot
+	dh_installdirs
+	$(MAKE) install PREFIX=$(PREFIX)
+
+#=============================================================#
+# <binary>
+
+binary: binary-indep binary-arch
+
+binary-indep: build install
+
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+#	dh_installdebconf
+#	dh_installdocs
+#	dh_installexamples
+#	dh_installmenu
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installpam
+#	dh_installmime
+#	dh_installinit -r -- start 80 2 . stop 5 0 6 .
+#	dh_installcron
+#	dh_installman
+#	dh_installinfo
+#	dh_undocumented
+	dh_installchangelogs 
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+#	dh_makeshlibs
+	dh_installdeb
+#	dh_perl
+#	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+#=============================================================#
+# <.PHONY>
+
+.PHONY: build clean binary-indep binary-arch binary install configure
+
+#EOF

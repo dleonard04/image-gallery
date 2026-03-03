@@ -1,0 +1,74 @@
+<project name="image-gallery" default="rpm" basedir=".">
+ <description>
+  Image::Gallery
+   Perl based image gallery creation modules and tools
+ </description>
+
+ <property file="${ant.project.name}.properties"/>
+
+ <property name="src.dir" location="../src"/>
+ <property name="top.dir" location="../staging"/>
+ <property name="BUILD.dir" location="${top.dir}/BUILD"/>
+ <property name="RPMS.dir" location="${top.dir}/RPMS"/>
+ <property name="SOURCES.dir" location="${top.dir}/SOURCES"/>
+ <property name="SPECS.dir" location="${top.dir}/SPECS"/>
+ <property name="SRPMS.dir" location="${top.dir}/SRPMS"/>
+
+ <macrodef name="generateListing"
+           description="Call application to generate a file/directory listing">
+  <attribute name="function" description="Application Function to call" />
+  <attribute name="outputProperty"
+             description="Property which contains the function's return values" />
+  <sequential>
+   <exec executable="/usr/bin/make"
+         dir="${src.dir}"
+         outputProperty="@{outputProperty}">
+    <arg line="@{function}" />
+   </exec>
+  </sequential>
+ </macrodef>
+
+ <target name="rpm">
+  <tstamp>
+   <format property="timestamp"
+           pattern="yyyyMMddhhmmss"/>
+  </tstamp>
+
+  <!-- Create RPM build tree -->
+  <delete dir="${top.dir}"/>
+  <mkdir dir="${BUILD.dir}"/>
+  <mkdir dir="${RPMS.dir}"/>
+  <mkdir dir="${SOURCES.dir}"/>
+  <mkdir dir="${SPECS.dir}"/>
+  <mkdir dir="${SRPMS.dir}"/>
+
+  <!-- tar/gzip source code and drop it where RPM can use it -->
+  <tar tarfile="${SOURCES.dir}/${ant.project.name}-${version}.tgz"
+       compression="gzip">
+   <tarfileset dir="${src.dir}"
+               prefix="${ant.project.name}-${version}"/>
+  </tar>
+
+ <!-- Dynamically dump the list of files for the package due to it being perl
+      version dependent.  -->
+ <generateListing outputProperty="file_list" function="dump-files" />
+
+  <!-- Copy the spec file into the build tree -->
+  <copy file="${ant.project.name}.spec"
+        tofile="${SPECS.dir}/${ant.project.name}.spec">
+   <filterset>
+    <filter token="PKG" value="${ant.project.name}"/>
+    <filter token="VERSION" value="${version}"/>
+    <filter token="RELEASE" value="${timestamp}"/>
+    <filter token="FILE_LIST" value="${file_list}"/>
+   </filterset>
+  </copy>
+
+  <!-- Create the RPM -->
+  <rpm specFile="${ant.project.name}.spec"
+       command="-ba"
+       cleanBuildDir="true"
+       topDir="${top.dir}"/>
+
+ </target>
+</project>

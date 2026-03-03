@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+[% INCLUDE header %]
+
+ <body>
+  <ul class="no_bullet">
+
+[% IF subdirs %]
+ [% FOREACH i IN subdirs -%]
+   <li><a href="[% i %]">[% i %]</a></li>
+ [% END %]
+[% END %]
+
+[% FOREACH i IN captions.keys.sort -%]
+ [% IF captions.$i.title %]
+   <li class="no_bullet"><a href="[% i %]"><img src=".thumb_[% i %]" alt="[% i %]"/></a>
+ [% ELSE %]
+   <li class="no_bullet"><a href="[% i %]"><img src=".thumb_[% i %]" alt="[% i %]"/></a>
+ [% END %]
+
+ [% IF captions.$i.keys %]
+    <ul class="no_bullet">
+  [% FOREACH j IN captions.$i.keys -%]
+     <li class="no_bullet">[% j %]: [% captions.$i.$j %]</li>
+  [% END %]
+    </ul>
+ [% END %]
+   </li>
+[% END %]
+  </ul>
+
+[% INCLUDE footer %]
+ </body>
+
+</html>

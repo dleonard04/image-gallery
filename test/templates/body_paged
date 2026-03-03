@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+[% INCLUDE header %]
+
+ <body>
+  <ul class="nobullet">
+[% FOREACH i IN captions.keys.sort -%]
+ [% IF captions.$i.title %]
+   <li class="nobullet"> <a href="[% i %]">[% captions.$i.title %]</a>
+ [% ELSE %]
+   <li class="nobullet"> <a href="[% i %]">[% i %]</a>
+ [% END %]
+    <ul>
+[% FOREACH j IN captions.$i.keys -%]
+     <li class="nobullet">[% j %]: [% captions.$i.$j %]</li>
+[% END %]
+    </ul>
+   </li>
+[% END %]
+  </ul>
+
+[% IF previous_page %]
+  <a href="[% previous_page_link %]">[% previous_page %]</a>
+[% END %]
+[% IF current_page %]
+ [% current_page %]
+[% END %]
+[% IF next_page %]
+  <a href="[% next_page_link %]">[% next_page %]</a>
+[% END %]
+
+[% INCLUDE footer %]
+
+ </body>
+</html>

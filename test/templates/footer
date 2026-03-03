@@ -1,0 +1,3 @@
+[% IF date %]
+ <div class=footer>[% date %]</div>  
+[% END %]

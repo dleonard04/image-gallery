@@ -1,0 +1,22 @@
+Dependencies:
+ (all package names are the debian names)
+ Perl
+  perl
+
+ Template Toolkit (http://www.template-toolkit.org/)
+  libtemplate-perl
+
+ PerlMagick, a perl interface to ImageMagick (http://www.imagemagick.org)
+  perlmagick
+
+ libwww, HTTP perl modules
+  libwww-perl
+
+--------------------------------------------------------------------------------
+
+Build Dependencies:
+ debhelper    (for debian)
+ dpkg-dev     (for debian)
+ ant          (for rpm via ant)
+ ant-optional (for rpm via ant)
+ rpm          (for rpm)

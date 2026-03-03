@@ -1,0 +1,42 @@
+<html>
+ <h1>Image Gallery toolkit</h1>
+
+<h2>Release: 001</h2>
+<p>   Initial release with minimal documentation and polish.  Modules and scripts are currently fully functional for current feature-set.  Build system is functional for debian and rpm packaging.</p>
+
+<p>
+<ul>
+ <li><a href="image-gallery_001-20061030222950.tgz">image-gallery_001-20061030222950.tgz</a> is the complete source tree.</li>
+ <li><a href="image-gallery_001_i386.deb">image-gallery_001_i386.deb</a> is a Debian Etch package.</li>
+ <li><a href="image-gallery-001-20061030222957.i386.rpm">image-gallery-001-20061030222957.i386.rpm</a> is an rpm built under Debian Etch.</li>
+ <li><a href="image-gallery_001.tar.gz">image-gallery_001.tar.gz</a> is a Debian src package</li>
+</ul>
+</p>
+
+<h2>Overview:</h2>
+<p>   This collection of perl modules and scripts is designed to create image galleries based on directories of images.  It utilized perlmagick to resize images, creating thumbnails.  It creates html output using the Template Toolkit.</p>
+
+<p>   This codebase can be installed directly, built as a rpm package, or built as a debian package.  It has been tested under Debian etch, Debian sarge, and Red Hat Enterprise Server 4.</p>
+
+<h2><a href="copyright.txt">Copyright</a></h2>
+
+<h2><a href="dependencies.txt">Dependencies</a></h2>
+
+<h2>Usage:</h2>
+<p> generate_thumbs.pl --help<br>
+    read_caption.pl --help<br>
+    write_html.pl --help</p>
+
+<h2>Specifications</h2>
+ <p><a href="caption_file_spec.txt">Caption file</a></p>
+
+<h2>Relevant toplevel Make targets:</h2>
+<p>
+ deb       # Builds a debian package<br>
+ deb-src   # Builds a debian src package<br>
+ rpm       # Builds a rpm package and rpm src package<br>
+ ant-rpm   # Builds a rpm package and rpm src package using the optional ant rpm target.<br>
+ install   # Install the code on the local machine<br>
+ clean     # Restore source tree</p>
+
+</html>

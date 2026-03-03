@@ -1,0 +1,40 @@
+Each directory can contain a .caption file with information about the various files in said directory.
+
+Features and limitations:
+ -The .caption file supports leading and trailing whitespace along with vertical whitespace.
+ -Whitespace around the = is optional.
+ -Values can be enclosed in " ' or nothing.
+ -There are no artificial limitations on date format.  It is treated as a string of text.
+ -If a field is present multiple times per file entry then the last entry sequentially is what will be used.
+ -If a file entry is present multiple times then the last time a particular field shows up for said file is what will be used.
+ -The .caption file does not support recursive directories.  There must be a .caption file for each directory containing files you want to delineate information for.
+ -Keys not in the definitive list in Gallery::Caption's @keys array will be skipped.
+ -In cases like the size parameter in the below example the code is smart enough to not strip the " from the end.
+
+-----------------------------------------------------------
+Sample entry from a .caption file:
+
+file = test.jpg
+ comment = "Drew while under the influence of a concussion."
+ copyright = 2000 by nekoken
+ date = 2000-06-04
+ medium = "Ink on Bristol board"
+ size = 11" x 14"
+ title = "All Things Fire"
+
+ 
+-----------------------------------------------------------
+The following keywords are considered valid but check Gallery::Caption's @keys for the most current list.
+
+artist
+comment
+copyright
+date
+date_captured
+file
+height
+medium
+sequence
+size
+title
+width
