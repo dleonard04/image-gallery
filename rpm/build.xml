@@ -60,7 +60,7 @@
     <filter token="PKG" value="${ant.project.name}"/>
     <filter token="VERSION" value="${version}"/>
     <filter token="RELEASE" value="${timestamp}"/>
-    <filter token="FILE_LIST" value="${file_list}"/>
+    <filter token="FILES" value="${file_list}"/>
    </filterset>
   </copy>
 

@@ -9,7 +9,7 @@ RPM=/usr/bin/rpmbuild
 
 PKG=image-gallery
 
-VERSION?=003
+VERSION?=004
 RELEASE?=$(shell date +%Y%m%d%H%M%S)
 
 
@@ -19,7 +19,11 @@ build:
 
 deb debian deb-bin: _FAKE_
 	@echo "Building debian package"
-	dpkg-buildpackage --sign-key=$(SIGN_KEY) -B
+ifeq ($(SIGN_KEY),)
+	dpkg-buildpackage -b -us -uc
+else
+	dpkg-buildpackage -b --sign-key=$(SIGN_KEY)
+endif
 
 deb-src:
 	@echo "Building debian src package"
@@ -33,15 +37,14 @@ tgz:
 slackware:
 	@echo "Slackware not yet implemented"
 
-# RPM build
-USRDIR=$(shell rpm --showrc | grep "\-14: _usr" | grep -v % | awk '{print $$3}')
-USRSRCDIR=$(shell rpm --showrc | grep "\-14: _usrsrc" | awk '{print $$3}' | sed 's!%{_usr}!$(USRDIR)!')
-TOPDIR=$(shell rpm --showrc | grep "\-14: _topdir" | awk '{print $$3}' | sed 's!%{_usrsrc}!$(USRSRCDIR)!' | sed 's!%{getenv:HOME}!$(HOME)!')
-BUILDDIR=$(shell rpm --showrc | grep "\-14: _builddir" | awk '{print $$3}' | sed 's!%{_topdir}!$(TOPDIR)!')
-RPMDIR=$(shell rpm --showrc | grep "\-14: _rpmdir" | awk '{print $$3}' | sed 's!%{_topdir}!$(TOPDIR)!')
-SOURCEDIR=$(shell rpm --showrc | grep "\-14: _sourcedir" | awk '{print $$3}' | sed 's!%{_topdir}!$(TOPDIR)!')
-SPECDIR=$(shell rpm --showrc | grep "\-14: _specdir" | awk '{print $$3}' | sed 's!%{_topdir}!$(TOPDIR)!')
-SRCRPMDIR=$(shell rpm --showrc | grep "\-14: _srcrpmdir" | awk '{print $$3}' | sed 's!%{_topdir}!$(TOPDIR)!')
+# RPM build.  Ask rpm itself for its build tree.  TOPDIR can be overridden,
+# e.g. `make rpm TOPDIR=/tmp/rpmbuild`, to build outside ~/rpmbuild.
+TOPDIR    ?= $(shell rpm --eval %{_topdir})
+BUILDDIR  := $(TOPDIR)/BUILD
+RPMDIR    := $(TOPDIR)/RPMS
+SOURCEDIR := $(TOPDIR)/SOURCES
+SPECDIR   := $(TOPDIR)/SPECS
+SRCRPMDIR := $(TOPDIR)/SRPMS
 
 TARBALL=$(PKG)-$(VERSION).tgz
 SPEC_FILE=rpm/$(PKG).spec
@@ -80,7 +83,7 @@ rpm redhat: _FAKE_
 	@perl -pi -e 's/Release: .*/Release: $(RELEASE)/' $(SPEC_FILE)
 
 	# Build RPM
-	@rpmbuild -ba --clean $(SPEC_FILE)
+	@rpmbuild -ba --clean --define "_topdir $(TOPDIR)" $(SPEC_FILE)
 
 # Build an rpm via ant
 ant-rpm:

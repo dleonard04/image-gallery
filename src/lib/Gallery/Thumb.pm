@@ -6,7 +6,7 @@ package Image::Gallery::Thumb;
 # Thumbnail generating library for Image::Gallery
 #
 #  Licensed under GPL v2
-#  (c) 2004-12 Douglas Leonard
+#  (c) 2004-2026 Douglas Leonard
 ################################################################################
 use strict;
 

@@ -2,7 +2,7 @@
 ################################################################################
 # Web sized generation script.  Part of the Image::Gallery suite.
 #
-# (c) 2006 dleonard@dleonard.net
+# (c) 2006-2026 dleonard@dleonard.net
 ################################################################################
 use strict;
 

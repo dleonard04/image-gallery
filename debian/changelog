@@ -1,8 +1,17 @@
+image-gallery (004) unstable; urgency=low
+
+  * Modernize Debian packaging: dh sequencer, debhelper compat 13,
+    Standards-Version 4.7.0, install to Perl vendor dirs instead of /usr/local.
+  * Fix RPM build: resolve the build tree via rpm --eval, mark package noarch.
+  * Target Debian 12+ / Ubuntu 22.04+ and current RHEL / Amazon Linux.
+
+ -- dleonard <dleonard@dleonard.net>  Sun, 27 Sep 2026 13:26:12 -0700
+
 image-gallery (003) unstable; urgency=low
 
   # Updated release for modern debian
 
- -- dleonard <dleonard@thegrey.net>  Fri, 18 Aug 2020 07:22:00 -0700
+ -- dleonard <dleonard@dleonard.net>  Fri, 18 Aug 2020 07:22:00 -0700
 
 image-gallery (002) unstable; urgency=low
 

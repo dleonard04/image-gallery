@@ -586,11 +586,11 @@ Method pagedHtml generates html output based on templates and .caption informati
 
 Douglas Leonard, E<lt>dleonard@dleonard.netE<gt>
 
-L<http://nekoken.org/>
+L<https://github.com/dleonard04/image-gallery>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2004-2008 by Douglas Leonard
+Copyright 2004-2026 by Douglas Leonard
 
 This library is free software; you can redistribute it and/or modify it under the terms of the General Public License (GPL) version 2.  For more information, see http://www.fsf.org/licenses/gpl.txt
 

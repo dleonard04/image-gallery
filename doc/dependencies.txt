@@ -1,22 +1,40 @@
-Dependencies:
- (all package names are the debian names)
- Perl
-  perl
+Dependencies
+============
 
- Template Toolkit (http://www.template-toolkit.org/)
-  libtemplate-perl
+Runtime
+-------
+Besides Perl core modules (Getopt::Long, Digest::MD5, Sys::Syslog, File::Copy,
+Exporter), the code needs two CPAN modules:
 
- PerlMagick, a perl interface to ImageMagick (http://www.imagemagick.org)
-  perlmagick
+  Image::Magick      - PerlMagick, the Perl interface to ImageMagick
+                       (https://imagemagick.org)
+  Template           - the Template Toolkit (http://www.template-toolkit.org/)
 
- libwww, HTTP perl modules
-  libwww-perl
+  Component        Debian / Ubuntu (apt)   RHEL / Amazon Linux (dnf/yum)
+  ---------        ---------------------   -----------------------------
+  Perl             perl                    perl
+  PerlMagick       perlmagick              ImageMagick-perl
+  Template Toolkit libtemplate-perl        perl-Template-Toolkit
 
---------------------------------------------------------------------------------
+  Debian / Ubuntu:
+    sudo apt install perl perlmagick libtemplate-perl
 
-Build Dependencies:
- debhelper    (for debian)
- dpkg-dev     (for debian)
- ant          (for rpm via ant)
- ant-optional (for rpm via ant)
- rpm          (for rpm)
+  RHEL / Amazon Linux:
+    sudo dnf install perl ImageMagick-perl perl-Template-Toolkit
+  On RHEL, ImageMagick-perl and perl-Template-Toolkit come from EPEL; enable it
+  first (e.g. `sudo dnf install epel-release`).
+
+Build
+-----
+Only needed to build packages, not to run the scripts.
+
+  Debian / Ubuntu package build (`make deb`):
+    sudo apt install build-essential debhelper dpkg-dev fakeroot
+    (debhelper 13 or newer; Debian 12 "bookworm" and newer, Ubuntu 22.04 and newer)
+
+  RPM build (`make rpm`):
+    sudo dnf install make rpm-build
+
+  Optional ant-driven RPM build (`make ant-rpm`):
+    Debian/Ubuntu: sudo apt install ant ant-optional rpm
+    RHEL/Amazon:   sudo dnf install ant rpm-build

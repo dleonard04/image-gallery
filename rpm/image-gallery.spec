@@ -3,9 +3,9 @@ Name: @PKG@
 Version: @VERSION@
 Release: @RELEASE@
 Source: %{name}-%{version}.tgz
-License: copyright 2006-2010 Douglas Leonard
+License: copyright 2006-2026 Douglas Leonard
 Group: Applications/System
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
+BuildArch: noarch
 
 %description
 Perl scripts for creating image galleries.  Generates thumbnails.  Handles reading caption files or generating captions based on image information.  Generates HTML pages based on Template Toolkit templates.

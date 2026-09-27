@@ -6,7 +6,7 @@ package Image::Gallery::Common;
 # Common Image::Gallery methods
 # 
 #  Licensed under GPL v2
-#  (c) 2005-7 dleonard@dleonard.net
+#  (c) 2005-2026 dleonard@dleonard.net
 ################################################################################
 use strict;
 
