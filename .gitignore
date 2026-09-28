@@ -1,0 +1,27 @@
+# Editor swap/backup files
+*.swp
+*.swo
+*~
+
+# Debian build artifacts
+/debian/files
+/debian/*.substvars
+/debian/*.debhelper
+/debian/*.debhelper.log
+/debian/.debhelper/
+/debian/debhelper-build-stamp
+/debian/image-gallery/
+/debian/tmp/
+build-stamp
+configure-stamp
+
+# RPM build artifacts
+/staging/
+/rpm/*.spec.original
+/rpm/*.spec.new
+
+# Generated source tarballs
+/*.tgz
+
+# Generated gallery output (from running the tools in-tree)
+.thumb_*
