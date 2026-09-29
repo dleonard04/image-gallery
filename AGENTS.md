@@ -16,8 +16,8 @@ package, or installed directly.
 - `src/lib/` — the `Image::Gallery` Perl modules (the actual logic).
 - `src/bin/` — thin CLI wrappers that parse options and drive the modules.
 - `test/` — sample images, `.caption` files, CSS, and templates used as the default
-  data set (installed under `/usr/local/image_gallery/test/`); there is no automated
-  test suite, the CLI defaults point here for manual runs.
+  data set (installed under `/usr/local/image_gallery/test/`), plus `run_tests.pl`,
+  the functional test wrapper (run it with `make test`).
 - `debian/`, `rpm/` — packaging.
 - `doc/` — README, dependency list, and the `.caption` file format spec.
 
@@ -89,14 +89,22 @@ perl src/bin/write_paged_html.pl --dir=/path/to/images --page=20
 perl src/bin/read_caption.pl --dir=/path/to/images
 ```
 
-To run against the checkout without installing, point Perl at the local lib:
-
-```sh
-perl -Isrc/lib src/bin/write_html.pl --dir=... --template_dir=test/templates --css_dir=test/css
-```
-
 Note: `read_caption.pl` has a hardcoded demo line printing the `title` of `havok_w1.jpg`;
 it assumes the sample data set.
+
+Loading the modules from the checkout is not just `-Isrc/lib`: the packages are
+`Image::Gallery::*` but the files live directly under `src/lib` (as `Gallery.pm` etc.),
+so Perl needs to find them beneath an `Image/` directory. `test/run_tests.pl` handles
+this by staging a temporary `Image -> src/lib` symlink; do the same for ad-hoc runs, or
+`make install` first.
+
+## Tests
+
+`make test` runs `test/run_tests.pl`, a functional wrapper that checks its dependencies
+(printing per-distro install commands and exiting if `Image::Magick` or `Template` is
+missing), then exercises caption parsing, thumbnail and web-size generation, and HTML
+output against the sample data. It uses `Test::More` (TAP), so `prove test/run_tests.pl`
+works too.
 
 ## Build & install
 
@@ -104,6 +112,7 @@ Top-level `Makefile` targets:
 
 ```sh
 make install      # install modules + scripts locally (delegates to src/Makefile)
+make test         # run the functional test wrapper (test/run_tests.pl)
 make deb          # build a Debian binary package (dpkg-buildpackage -b; -us -uc unless SIGN_KEY set)
 make deb-src      # build a Debian source package
 make rpm          # build RPM + src RPM (rewrites rpm/image-gallery.spec %files from src)

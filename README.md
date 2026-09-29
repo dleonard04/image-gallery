@@ -1,10 +1,11 @@
 # Image Gallery toolkit
 
-## Release: 004
+## Release: 005
 
 Collection of Perl modules and scripts for generating static HTML image
-galleries from directories of images. Release 004 modernizes the Debian and RPM
-build systems for current distributions.
+galleries from directories of images. Release 004 modernized the Debian and RPM
+build systems for current distributions; release 005 adds a functional test
+suite.
 
 Project home: <https://github.com/dleonard04/image-gallery>
 
@@ -65,4 +66,5 @@ write_paged_html.pl --help
 | `rpm`     | Build an RPM package and RPM source package                   |
 | `ant-rpm` | Build an RPM package and source package via the ant rpm target |
 | `install` | Install the code on the local machine                         |
+| `test`    | Run the functional test suite (`test/run_tests.pl`)           |
 | `clean`   | Restore the source tree                                       |

@@ -9,7 +9,7 @@ RPM=/usr/bin/rpmbuild
 
 PKG=image-gallery
 
-VERSION?=004
+VERSION?=005
 RELEASE?=$(shell date +%Y%m%d%H%M%S)
 
 
@@ -94,6 +94,11 @@ ant-rpm:
 install:
 	@echo "Installing image-gallery"
 	$(MAKE) -C src install
+
+# Depend on _FAKE_ so this runs despite the test/ directory sharing the name.
+test: _FAKE_
+	@echo "Running image-gallery tests"
+	perl test/run_tests.pl
 
 clean: clean-ant clean-deb clean-rpm
 

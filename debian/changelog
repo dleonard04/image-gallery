@@ -1,3 +1,10 @@
+image-gallery (005) unstable; urgency=low
+
+  * Add a functional test suite (test/run_tests.pl) with an up-front
+    dependency check and a `make test` target.
+
+ -- dleonard <dleonard@dleonard.net>  Tue, 29 Sep 2026 08:58:12 -0700
+
 image-gallery (004) unstable; urgency=low
 
   * Modernize Debian packaging: dh sequencer, debhelper compat 13,
