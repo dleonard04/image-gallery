@@ -24,14 +24,22 @@ GetOptions(\%options,
 
 help() if $help;
            
-my $gallery = Image::Gallery->new(\%options);
-$gallery->captions();
+eval {
+ my $gallery = Image::Gallery->new(\%options);
+ $gallery->captions();
 
-# Print individual attribute for individual file.
-print $gallery->{Caption}{$options{dir}}->title('havok_w1.jpg') . "\n";
+ # Print individual attribute for individual file.
+ print $gallery->{Caption}{$options{dir}}->title('havok_w1.jpg') . "\n";
 
-# Dump all captions
-$gallery->listCaptions();
+ # Dump all captions
+ $gallery->listCaptions();
+ 1;
+} or do {
+ my $err = $@;
+ chomp $err;
+ Image::Gallery->error($err) unless Image::Gallery->quiet();
+ exit 1;
+};
 
 ################################################################################
 # help

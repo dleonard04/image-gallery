@@ -44,22 +44,30 @@ if ($options{template_debug}) {
                    | DEBUG_FILTERS | DEBUG_SERVICE;
 }
 
-my $gallery = Image::Gallery->new(\%options);
+eval {
+ my $gallery = Image::Gallery->new(\%options);
 
-# Read in the .caption file(s)
-$gallery->captions(\%options);
+ # Read in the .caption file(s)
+ $gallery->captions(\%options);
 
-# Create thumbnails
-if ($options{thumbs}) {
- $gallery->thumbs(\%options);
-}
+ # Create thumbnails
+ if ($options{thumbs}) {
+  $gallery->thumbs(\%options);
+ }
 
-my $css = $gallery->files({dir => $options{css_dir},
-                           noassign => 1});
+ my $css = $gallery->files({dir => $options{css_dir},
+                            noassign => 1});
 
-# Create html pages for each directory
-$gallery->html(input => {favicon => $options{favicon},
-                         stylesheet => $css});
+ # Create html pages for each directory
+ $gallery->html(input => {favicon => $options{favicon},
+                          stylesheet => $css});
+ 1;
+} or do {
+ my $err = $@;
+ chomp $err;
+ Image::Gallery->error($err) unless Image::Gallery->quiet();
+ exit 1;
+};
 
 ################################################################################
 # help

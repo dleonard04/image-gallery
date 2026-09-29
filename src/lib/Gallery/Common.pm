@@ -94,14 +94,14 @@ sub facility {
 ################################################################################
 # fatal
 ################################################################################
+# Log the error, then throw. Callers (or an uncaught die) report it; this used
+# to exit(1) directly, which a library must not do.
 sub fatal {
  my $self = shift;
 
  $self->logger('err', @_);
 
- $self->error(@_) unless $quiet;
-
- exit 1;
+ die @_ ? join("\n", @_) . "\n" : "Fatal error.\n";
 } #fatal
 
 ################################################################################

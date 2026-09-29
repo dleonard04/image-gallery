@@ -31,9 +31,16 @@ GetOptions(\%options,
 
 help() if $help;
 
-my $gallery = Image::Gallery->new(\%options);
-
-$gallery->thumbs(\%options);
+eval {
+ my $gallery = Image::Gallery->new(\%options);
+ $gallery->thumbs(\%options);
+ 1;
+} or do {
+ my $err = $@;
+ chomp $err;
+ Image::Gallery->error($err) unless Image::Gallery->quiet();
+ exit 1;
+};
 
 ################################################################################
 # help
