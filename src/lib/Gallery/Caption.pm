@@ -60,19 +60,17 @@ use parent -norequire, 'Image::Gallery::Common';
 # I: $file, [$value]
 # O: value of $field for $file
 ################################################################################
-foreach my $field (@Image::Gallery::Caption::Fields) {
- eval <<END;
-sub $field {
- my (\$self, \$file) = splice (\@_, 0, 2);
+{
+ no strict 'refs';
+ foreach my $field (@Image::Gallery::Caption::Fields) {
+  *{"Image::Gallery::Caption::$field"} = sub {
+   my ($self, $file) = splice(@_, 0, 2);
 
- if (scalar \@_) {
-  \$self->{captions}{\$file}{$field} = shift;
+   $self->{captions}{$file}{$field} = shift if scalar @_;
+
+   return $self->{captions}{$file}{$field};
+  };
  }
-
- return \$self->{captions}{\$file}{$field};
-}
-END
-
 }
 
 ################################################################################

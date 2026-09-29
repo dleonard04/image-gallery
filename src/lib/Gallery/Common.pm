@@ -12,6 +12,7 @@ use strict;
 use warnings;
 
 use Digest::MD5;
+use File::Path qw(make_path);
 use Sys::Syslog;
 
 my @validlevels = ('alert',
@@ -324,14 +325,17 @@ sub mkdir {
 
  $perms ||= $self->{perms} || 0775;
 
- if (!-d $dir && !mkdir($dir, $perms)) {
-  unless ($options->{nonfatal}) {
-   $self->fatal("Unable to read or create directory [$dir].");
-  }
+ if (!-d $dir) {
+  make_path($dir, {mode => $perms, error => \my $errors});
+  if (!-d $dir) {
+   unless ($options->{nonfatal}) {
+    $self->fatal("Unable to read or create directory [$dir].");
+   }
 
-  return 0;
+   return 0;
+  }
  }
- 
+
  return 1;
 }
 
