@@ -6,10 +6,10 @@ package Image::Gallery;
 # Image Gallery generation software
 ################################################################################
 use strict;
+use warnings;
 
 use Image::Gallery::Common;
-use vars '@ISA';
-@ISA = 'Image::Gallery::Common';
+use parent -norequire, 'Image::Gallery::Common';
 
 use Image::Gallery::Caption;
 use Image::Gallery::Html;
@@ -73,12 +73,13 @@ sub files {
  } else {
   my $dir = $options->{dir} || $self->{dir};
 
-  if (!opendir(DIR, $dir)) {
+  my $dh;
+  if (!opendir($dh, $dir)) {
    $self->fatal("Unable to open directory [$dir].");
   }
 
-  $tmplist = [map {$dir . '/' . $_} grep {!/^\.|CVS/} readdir(DIR)];
-  closedir DIR;
+  $tmplist = [map {$dir . '/' . $_} grep {!/^\.|CVS/} readdir($dh)];
+  closedir $dh;
 
   if ($self->{recursive} && !$options->{noassign}) {
    $self->_recursive($tmplist);
@@ -404,15 +405,16 @@ sub _recursive {
    push @tmplist, $file;
 
   } elsif (-d $file) {
-   if (!opendir(DIR, $file)) {
+   my $dh;
+   if (!opendir($dh, $file)) {
     $self->fatal("Unable to open directory [$file].");
    }
 
    # Append new things found in the directory to the end of our list of things
    # to iterate over.  Note: this could result in an infinite loop if following
    # symlinks was allowed.
-   push @$files, map {$file . '/' . $_} grep {!/^\.|CVS/} readdir(DIR);
-   closedir(DIR);
+   push @$files, map {$file . '/' . $_} grep {!/^\.|CVS/} readdir($dh);
+   closedir($dh);
   }
  }
 
@@ -430,15 +432,16 @@ sub _recursive_dirs {
  foreach my $dir (@{$self->{dirs}}) {
   push @tmplist, $dir;
 
-  if (!opendir(DIR, $dir)) {
+  my $dh;
+  if (!opendir($dh, $dir)) {
    $self->fatal("Unable to open directory [$dir].");
   }
 
   # Append new directories found in $dir to the end of our list of dirs
   # to iterate over.  Note: this could result in an infinite loop if following
   # symlinks was allowed.
-  my @tmpdirs = grep {-d $_} map {$dir . '/' . $_} grep {!/^\.|CVS/} readdir(DIR);
-  closedir(DIR);
+  my @tmpdirs = grep {-d $_} map {$dir . '/' . $_} grep {!/^\.|CVS/} readdir($dh);
+  closedir($dh);
 
   $self->{dirTree}{$dir} = \@tmpdirs;
   push @{$self->{dirs}}, @tmpdirs; 

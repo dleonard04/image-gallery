@@ -6,12 +6,12 @@ package Image::Gallery::Html;
 # Html output library for Image::Gallery
 ################################################################################
 use strict;
+use warnings;
 
 use Template;
 
 use Image::Gallery::Common;
-use vars '@ISA';
-@ISA = 'Image::Gallery::Common';
+use parent -norequire, 'Image::Gallery::Common';
 
 ################################################################################
 # new

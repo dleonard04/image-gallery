@@ -9,6 +9,7 @@ package Image::Gallery::Common;
 #  (c) 2005-2026 dleonard@dleonard.net
 ################################################################################
 use strict;
+use warnings;
 
 use Digest::MD5;
 use Sys::Syslog;
@@ -63,19 +64,20 @@ sub error {
  my $self = shift;
 
  # If a logfile is specified write to it.  Otherwise write to STDERR.
+ my $fh;
  if ($logfile) {
-  open (FILE, ">>$logfile");
+  open ($fh, '>>', $logfile);
  } else {
-  open (FILE, ">&STDERR");
+  open ($fh, '>&', \*STDERR);
  }
 
  my $date = localtime(time);
 
  foreach (@_) {
-  print FILE "$date: $_\n";
+  print $fh "$date: $_\n";
  }
 
- close FILE;
+ close $fh;
 } #error
 
 ################################################################################
@@ -139,7 +141,7 @@ sub logger {
 
  if ($logger) {
   my $loggercmd = $self->{loggercmd} || $logger;
-  `$loggercmd -p $facility.$level \"$previouscaller $caller: @_\"`;
+  system($loggercmd, '-p', "$facility.$level", "$previouscaller $caller: @_");
 
  } else {
   openlog($0, 'pid', $facility);
@@ -242,14 +244,15 @@ sub date {
 sub md5 {
  my ($self, $file) = @_;
 
- if (!open(FILE, $file)) {
+ my $fh;
+ if (!open($fh, '<', $file)) {
   $self->fatal("Unable to open [$file] for md5sum.");
  }
 
- binmode(FILE);
+ binmode($fh);
 
- my $sum = Digest::MD5->new->addfile(*FILE)->hexdigest;
- close FILE;
+ my $sum = Digest::MD5->new->addfile($fh)->hexdigest;
+ close $fh;
  return $sum;
 }
 
@@ -267,11 +270,12 @@ sub getSubdirectories {
  }
 
  # Get the subdirectories
- if (!opendir (DIR, $dir)) {
+ my $dh;
+ if (!opendir ($dh, $dir)) {
   $self->fatal("Unable to open directory [$dir].");
  }
- my @dirs = grep {-d $dir . '/' . $_ && !/^\.+/} readdir(DIR);
- close DIR;
+ my @dirs = grep {-d $dir . '/' . $_ && !/^\.+/} readdir($dh);
+ closedir $dh;
 
  my @full_dirs = map {$dir . '/' . $_} @dirs;
 
@@ -292,11 +296,12 @@ sub getFiles {
  }
 
  # Get the files
- if (!opendir (DIR, $dir)) {
+ my $dh;
+ if (!opendir ($dh, $dir)) {
   $self->fatal("Unable to open directory [$dir].");
  }
- my @files = grep {-f $dir . '/' . $_ && !/^\.+/} readdir(DIR);
- close DIR;
+ my @files = grep {-f $dir . '/' . $_ && !/^\.+/} readdir($dh);
+ closedir $dh;
 
  my @full_files = map {$dir . '/' . $_} @files;
 

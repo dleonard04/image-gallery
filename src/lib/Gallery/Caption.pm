@@ -6,12 +6,12 @@ package Image::Gallery::Caption;
 # Caption handling library for Image::Gallery
 ################################################################################
 use strict;
+use warnings;
 
 use File::Copy;
 
 use Image::Gallery::Common;
-use vars '@ISA';
-@ISA = 'Image::Gallery::Common';
+use parent -norequire, 'Image::Gallery::Common';
 
 # List valid fields and the order in which they should appear
 @Image::Gallery::Caption::Fields = ('dir',
@@ -125,7 +125,8 @@ sub read {
  if (!-f $self->{file} && !$allfiles) {
   $self->fatal('No caption file defined and allfiles option not set.');
  }
- if (!open(FILE, $self->{file}) && !$allfiles) {
+ my $fh;
+ if (!open($fh, '<', $self->{file}) && !$allfiles) {
   $self->fatal('Unable to read caption file [' . $self->{file} . '].');
  }
 
@@ -137,7 +138,7 @@ sub read {
  }
 
  my $new = '';
- while (my $line = <FILE>) {
+ while ($fh && (my $line = <$fh>)) {
   next if $line =~ /^\s*$/; # Skip blank lines
   next if $line =~ /^\s*#/; # Skip commented lines
 
@@ -146,7 +147,7 @@ sub read {
   my $value = $3;
 
   # Strip enclosing ' or " from $value if necessary
-  $value =~ s/$2$//;
+  $value =~ s/\Q$2\E$//;
 
   # Skip keys that aren't in the valid list
   next if !exists $Image::Gallery::Caption::Fields{$key};
@@ -165,7 +166,7 @@ sub read {
   $self->{captions}{$new}{$key} = $value;
  }
 
- close FILE;
+ close $fh if $fh;
 
  # Strip entries that don't exist on the filesystem
  if ($self->{existence} || $options->{existence}) { 
@@ -196,11 +197,11 @@ sub listCaptions {
 
  my $hashref = $options->{dirs} ? $self->{dir_captions} : $self->{captions};
 
- foreach my $file (sort {$self->customSort()} keys %$hashref) {
+ foreach my $file (sort {$self->captionSort()} keys %$hashref) {
   printf $format, 'file', $file;
 
   foreach my $elem (@Image::Gallery::Caption::Fields[1..$#Image::Gallery::Caption::Fields]) {
-   printf $format, ' ' . $elem, $hashref->{$file}{$elem};
+   printf $format, ' ' . $elem, $hashref->{$file}{$elem} // '';
   }
  }
 }
@@ -222,20 +223,21 @@ sub write {
   copy($self->{file}, $self->{file} . '.bak');
  }
 
- if (!open (FILE, ">$self->{file}")) {
+ my $fh;
+ if (!open ($fh, '>', $self->{file})) {
   $self->fatal('Could not open [' . $self->{file} . '] for writing.');
  }
 
- foreach my $file (sort {$self->customSort()} keys %{$self->{captions}}) {
-  printf FILE "file: %s\n", $file;
+ foreach my $file (sort {$self->captionSort()} keys %{$self->{captions}}) {
+  printf $fh "file: %s\n", $file;
 
   foreach my $elem (@Image::Gallery::Caption::Fields[1..$#Image::Gallery::Caption::Fields]) {
-   printf FILE " %s: %s\n", $elem, $self->{captions}{$file}{$elem};
+   printf $fh " %s: %s\n", $elem, $self->{captions}{$file}{$elem} // '';
   }
-  print FILE "\n";
+  print $fh "\n";
  }
 
- close FILE;
+ close $fh;
 } #write
 
 ################################################################################
@@ -247,15 +249,16 @@ sub write {
 sub files {
  my ($self) = @_;
 
- if (!opendir(DIR, $self->{dir})) {
+ my $dh;
+ if (!opendir($dh, $self->{dir})) {
   $self->fatal("Unable to open directory [$self->{dir}].");
  }
 
  # TODO turn this into a loop and track the directories too.
  my @dirs = ();
 
- my @files = grep {-f $_} map {$self->{dir} . '/' . $_ } grep {!/^\.|CVS|.*html/} readdir(DIR);
- closedir DIR;
+ my @files = grep {-f $_} map {$self->{dir} . '/' . $_ } grep {!/^\.|CVS|.*html/} readdir($dh);
+ closedir $dh;
 
  $self->{files} = {};
  foreach my $file (@files) {

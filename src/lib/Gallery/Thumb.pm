@@ -9,16 +9,15 @@ package Image::Gallery::Thumb;
 #  (c) 2004-2026 Douglas Leonard
 ################################################################################
 use strict;
+use warnings;
 
 use Image::Magick;
 use Exporter;
 
 use Image::Gallery::Common;
+use parent -norequire, 'Exporter', 'Image::Gallery::Common';
 
-use vars qw(@ISA @EXPORT_OK %EXPORT_TAGS);
-use vars qw(@CONST);
-
-@ISA = qw(Exporter Image::Gallery::Common);
+our (@EXPORT_OK, %EXPORT_TAGS);
 
 use constant PREPEND => '.thumb_';
 use constant POSTPEND => '_thumb';

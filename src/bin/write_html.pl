@@ -5,6 +5,7 @@
 # (c) 2006-2026 dleonard@dleonard.net
 ################################################################################
 use strict;
+use warnings;
 
 use Getopt::Long;
 Getopt::Long::Configure('bundling');
