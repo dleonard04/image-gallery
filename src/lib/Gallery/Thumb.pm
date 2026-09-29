@@ -57,7 +57,8 @@ sub new {
   $class->fatal('Unable to create new Image::Magick object.') if !$self->{Image};
  }
 
- $class->fatal($_) if $self->{Image}->Read($self->{image} . '[0]');
+ my $err = $self->{Image}->Read($self->{image} . '[0]');
+ $class->fatal($err) if $err;
 
  # Get a few attributes needed in a number of places
  ($self->{width}, $self->{height}, $self->{size}, $self->{format}) = $self->{Image}->Ping($self->{image});
@@ -86,10 +87,9 @@ sub scale {
 
  my $height = int($width / $self->{width} * $self->{height});
 
- if ($self->{Image}->Scale(width => $width,
-                           height => $height)) {
-  $self->fatal($_);
- }
+ my $err = $self->{Image}->Scale(width => $width,
+                                 height => $height);
+ $self->fatal($err) if $err;
 }
 
 ################################################################################
