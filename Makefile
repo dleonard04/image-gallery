@@ -9,7 +9,7 @@ RPM=/usr/bin/rpmbuild
 
 PKG=image-gallery
 
-VERSION?=005
+VERSION?=006
 RELEASE?=$(shell date +%Y%m%d%H%M%S)
 
 

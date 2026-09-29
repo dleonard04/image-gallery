@@ -1,3 +1,13 @@
+image-gallery (006) unstable; urgency=low
+
+  * Only rescale images whose contents changed, tracked per directory in a
+    .md5sums cache; add --force to generate_thumbs.pl and generate_websized.pl
+    to rescale everything regardless.
+  * Split the functional test suite into per-topic files under test/t/ with
+    shared setup in test/lib/GalleryTest.pm.
+
+ -- dleonard <dleonard@dleonard.net>  Mon, 29 Sep 2026 10:30:00 -0700
+
 image-gallery (005) unstable; urgency=low
 
   * Add a functional test suite (test/run_tests.pl) with an up-front

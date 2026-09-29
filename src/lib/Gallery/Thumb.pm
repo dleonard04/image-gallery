@@ -138,11 +138,17 @@ sub generateThumbFilename {
   $options = scalar @_ ? {@_} : {};
  }
 
+ # Callable on an object or as a class method with image/prepend/postpend
+ # passed in, so a filename can be derived without reading the image.
+ my $image    = defined $options->{image}    ? $options->{image}    : (ref $self ? $self->{image}    : undef);
+ my $prepend  = exists  $options->{prepend}  ? $options->{prepend}  : (ref $self ? $self->{prepend}  : undef);
+ my $postpend = exists  $options->{postpend} ? $options->{postpend} : (ref $self ? $self->{postpend} : undef);
+
  my $thumb;
- ($thumb = $self->{image}) =~ s#([^/]+)\.([^/]+)$##;
- $thumb .= $self->{prepend} if $self->{prepend};
+ ($thumb = $image) =~ s#([^/]+)\.([^/]+)$##;
+ $thumb .= $prepend if $prepend;
  $thumb .= $1;
- $thumb .= $self->{postpend} if $self->{postpend};
+ $thumb .= $postpend if $postpend;
  if ($options->{format}) {
   $thumb .= '.' . $options->{format};
  } else {

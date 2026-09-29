@@ -1,11 +1,12 @@
 # Image Gallery toolkit
 
-## Release: 005
+## Release: 006
 
 Collection of Perl modules and scripts for generating static HTML image
 galleries from directories of images. Release 004 modernized the Debian and RPM
 build systems for current distributions; release 005 adds a functional test
-suite.
+suite; release 006 rescales only images that have changed and adds a `--force`
+override.
 
 Project home: <https://github.com/dleonard04/image-gallery>
 
@@ -52,6 +53,12 @@ read_caption.pl --help
 write_html.pl --help
 write_paged_html.pl --help
 ```
+
+`generate_thumbs.pl` and `generate_websized.pl` only rescale an image when its
+contents have changed since the last run, or when its scaled copy is missing.
+Each directory's source checksums are recorded in a `.md5sums` file (in the
+standard `md5sum` format, so `md5sum -c .md5sums` verifies it). Pass `--force`
+to rescale every image regardless.
 
 ## Specifications
 

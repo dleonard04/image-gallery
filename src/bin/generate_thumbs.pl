@@ -18,6 +18,7 @@ my %options = (dir => '/usr/local/image_gallery/test/images',
                recursive => 1);
 GetOptions(\%options,
            'dir=s',
+           'force',
            'format=s',
            'h|help' => \$help,
            'ignore=s',
@@ -47,6 +48,9 @@ sub help {
  print <<END;
 generate_thumbs.pl
  --dir=DIRECTORY              # Directory to create thumbnails in
+ --force                      # Rescale every image, ignoring the .md5sums
+                                cache.  By default only images whose contents
+                                changed since the last run are rescaled.
  --format=IMAGE_TYPE          # Type of image to create.  Default is same as
                                 original image.
  -h|--help                    # Commandline usage

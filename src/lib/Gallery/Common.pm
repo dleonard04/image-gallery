@@ -15,6 +15,10 @@ use Digest::MD5;
 use File::Path qw(make_path);
 use Sys::Syslog;
 
+# Per-directory source-image checksum cache, so scaling can be skipped when a
+# source is unchanged. coreutils md5sum format, so `md5sum -c` reads it too.
+use constant MD5SUMS => '.md5sums';
+
 my @validlevels = ('alert',
                    'crit',
                    'debug',
@@ -255,6 +259,57 @@ sub md5 {
  my $sum = Digest::MD5->new->addfile($fh)->hexdigest;
  close $fh;
  return $sum;
+}
+
+################################################################################
+# readMd5sums
+#  Read a directory's .md5sums cache.
+# I: $dir
+# O: \%sums                  # basename => md5 hex (empty if no cache yet)
+################################################################################
+sub readMd5sums {
+ my ($self, $dir) = @_;
+
+ my $file = $dir . '/' . MD5SUMS;
+ my %sums;
+ return \%sums if !-f $file;
+
+ my $fh;
+ if (!open($fh, '<', $file)) {
+  $self->fatal("Unable to open [$file] for reading.");
+ }
+
+ # Each line is "<hex>  <name>" or "<hex> *<name>" (text/binary marker).
+ while (my $line = <$fh>) {
+  if (my ($sum, $name) = $line =~ /^([0-9a-fA-F]{32}) [ *](.+?)\s*$/) {
+   $sums{$name} = lc $sum;
+  }
+ }
+ close $fh;
+
+ return \%sums;
+}
+
+################################################################################
+# writeMd5sums
+#  Write a directory's .md5sums cache.
+# I: $dir
+#    \%sums                  # basename => md5 hex
+################################################################################
+sub writeMd5sums {
+ my ($self, $dir, $sums) = @_;
+
+ my $file = $dir . '/' . MD5SUMS;
+
+ my $fh;
+ if (!open($fh, '>', $file)) {
+  $self->fatal("Unable to open [$file] for writing.");
+ }
+
+ foreach my $name (sort keys %$sums) {
+  print $fh "$sums->{$name}  $name\n";
+ }
+ close $fh;
 }
 
 ################################################################################

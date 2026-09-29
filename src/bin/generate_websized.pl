@@ -20,6 +20,7 @@ my %options = (dir => '/usr/local/image_gallery/test/images',
                width => 950);
 GetOptions(\%options,
            'dir=s',
+           'force',
            'format=s',
            'h|help' => \$help,
            'overwrite',
@@ -49,11 +50,14 @@ sub help {
  print <<END;
 generate_thumbs.pl
  --dir=DIRECTORY              # Directory to create thumbnails in
+ --force                      # Rescale every image, ignoring the .md5sums
+                                cache.  By default only images whose contents
+                                changed since the last run are rescaled.
  --format=IMAGE_TYPE          # Type of image to create.  Default is same as
                                 original image.
  -h|--help                    # Commandline usage
  --norecursive                # Turn off recursive directory following.
- --overwrite                  # Turn on overwriting of thumbnails
+ --overwrite                  # Turn on overwriting of web-sized copies
  --percentage=PERCENT         # Percent to scale to.  --percentage and --width
                                 are mutually exclusive.  Default is 950 pixels.
  --postpend=STRING            # What to postpend each image with.  Default is

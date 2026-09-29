@@ -16,8 +16,9 @@ package, or installed directly.
 - `src/lib/` — the `Image::Gallery` Perl modules (the actual logic).
 - `src/bin/` — thin CLI wrappers that parse options and drive the modules.
 - `test/` — sample images, `.caption` files, CSS, and templates used as the default
-  data set (installed under `/usr/local/image_gallery/test/`), plus `run_tests.pl`,
-  the functional test wrapper (run it with `make test`).
+  data set (installed under `/usr/local/image_gallery/test/`), plus the functional test
+  suite: `run_tests.pl` (the runner), `t/` (per-topic `.t` files), and `lib/GalleryTest.pm`
+  (shared setup). Run it with `make test`.
 - `debian/`, `rpm/` — packaging.
 - `doc/` — README, dependency list, and the `.caption` file format spec.
 
@@ -50,6 +51,14 @@ Key design points:
   it never re-scales existing thumbnails, `.caption`, or `.html` files. `generate_websized.pl`
   reuses the same `thumbs()` path but postpends `x950` and uses width 950 to make full-size
   web copies rather than small thumbnails.
+- **Incremental regeneration.** By default `thumbs()` only rescales a source whose contents
+  changed since the last run, or whose scaled copy is missing. It records each directory's
+  source checksums in a `.md5sums` file (constant `MD5SUMS` in `Common.pm`, standard `md5sum`
+  format so `md5sum -c` reads it) via the `readMd5sums`/`writeMd5sums` helpers, keyed on the
+  *source* basename. The cache is shared across output kinds: a thumbs run and a websized run
+  record the same source hashes, and each still regenerates its own missing output. Pass
+  `force` (or `overwrite`) to rescale regardless; `Thumb::generateThumbFilename` can be called
+  as a class method so `thumbs()` can derive the output path without reading the image.
 - **Recursion.** `_recursive` / `_recursive_dirs` walk directories iteratively (appending
   to a worklist). Symlinks are deliberately not followed to avoid infinite loops. Entries
   matching `/^\.|CVS/` (dotfiles and CVS) are excluded everywhere.
@@ -73,8 +82,11 @@ The CLI scripts default to reading/writing the sample data under
 supports `--help`.
 
 ```sh
-# Generate thumbnails (default width 150px, recursive)
+# Generate thumbnails (default width 150px, recursive; only rescales changed images)
 perl src/bin/generate_thumbs.pl --dir=/path/to/images
+
+# Force a rescale of every image, ignoring the .md5sums cache
+perl src/bin/generate_thumbs.pl --dir=/path/to/images --force
 
 # Generate web-sized copies (default width 950px, postpended "x950")
 perl src/bin/generate_websized.pl --dir=/path/to/images
@@ -94,17 +106,25 @@ it assumes the sample data set.
 
 Loading the modules from the checkout is not just `-Isrc/lib`: the packages are
 `Image::Gallery::*` but the files live directly under `src/lib` (as `Gallery.pm` etc.),
-so Perl needs to find them beneath an `Image/` directory. `test/run_tests.pl` handles
-this by staging a temporary `Image -> src/lib` symlink; do the same for ad-hoc runs, or
-`make install` first.
+so Perl needs to find them beneath an `Image/` directory. `test/lib/GalleryTest.pm` handles
+this by staging a temporary `Image -> src/lib` symlink when loaded; do the same for ad-hoc
+runs, or `make install` first.
 
 ## Tests
 
-`make test` runs `test/run_tests.pl`, a functional wrapper that checks its dependencies
-(printing per-distro install commands and exiting if `Image::Magick` or `Template` is
-missing), then exercises caption parsing, thumbnail and web-size generation, and HTML
-output against the sample data. It uses `Test::More` (TAP), so `prove test/run_tests.pl`
-works too.
+`make test` runs `test/run_tests.pl`, which checks dependencies once (printing per-distro
+install commands and exiting if `Image::Magick` or `Template` is missing), then runs every
+`test/t/*.t` file through `TAP::Harness`. The suite is split by topic — module load
+(`00-load.t`), caption parsing (`10-caption.t`), thumbnail and web-size generation
+(`20-thumbs.t`), incremental `.md5sums` regeneration (`30-md5cache.t`), and HTML output
+(`40-html.t`) — all exercised against the sample data in `test/`.
+
+Shared setup lives in `test/lib/GalleryTest.pm`: it stages the module symlink on load,
+lists the runtime dependencies, and provides the sample-data path plus `spew`/`slurp`
+helpers. Each `.t` file locates that module via `FindBin` and is self-contained, so
+individual files run under `prove test/t/30-md5cache.t` too (they assume the dependencies
+are installed; `run_tests.pl` is what reports missing ones). Add a new `.t` file to `t/`
+to cover new behavior.
 
 ## Build & install
 

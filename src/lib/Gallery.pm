@@ -181,12 +181,47 @@ sub thumbs {
   $write_options{$param} = $options->{$param} if defined $options->{$param};
  }
 
- foreach my $file (@{$self->{files}}) {
-  $thumb_options{image} = $file;
-  my $thumb = Image::Gallery::Thumb->new(\%thumb_options);
+ # Regenerate everything, ignoring the .md5sums cache, when forced.
+ my $force = $options->{force} || $options->{overwrite};
 
-  $thumb->scale(\%scale_options);
-  $thumb->write(\%write_options);
+ my %md5cache; # dir => {basename => md5}
+ my %dirty;    # dirs whose .md5sums need rewriting
+
+ foreach my $file (@{$self->{files}}) {
+  my ($dir, $base) = $file =~ m#^(.*)/([^/]+)$# ? ($1, $2) : ('.', $file);
+
+  $md5cache{$dir} ||= $self->readMd5sums($dir);
+  my $sum = $self->md5($file);
+  my $changed = !defined $md5cache{$dir}{$base}
+                || $md5cache{$dir}{$base} ne $sum;
+
+  # Where this source's scaled copy lands. The cache is keyed on the source,
+  # so thumbs and websized share it; each still regenerates its own output
+  # whenever that output is missing.
+  my $thumbfile = Image::Gallery::Thumb->generateThumbFilename(
+                   {image => $file,
+                    prepend => $thumb_options{prepend},
+                    postpend => $thumb_options{postpend},
+                    format => $options->{format}});
+
+  # Skip unchanged sources whose scaled copy already exists.
+  unless (!$force && !$changed && -f $thumbfile) {
+   $thumb_options{image} = $file;
+   my $thumb = Image::Gallery::Thumb->new(\%thumb_options);
+
+   $thumb->scale(\%scale_options);
+   $thumb->write({%write_options,
+                  overwrite => ($force || $changed) ? 1 : $write_options{overwrite}});
+  }
+
+  if ($changed) {
+   $md5cache{$dir}{$base} = $sum;
+   $dirty{$dir} = 1;
+  }
+ }
+
+ foreach my $dir (keys %dirty) {
+  $self->writeMd5sums($dir, $md5cache{$dir});
  }
 }
 
